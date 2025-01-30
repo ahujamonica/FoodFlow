@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste to Resource - Sustainable Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c5834;
+            --secondary-color: #4CAF50;
+            --accent-color: #81C784;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+
+        .overview {
+            font-size: 1.4em;
+            color: #444;
+            margin: 30px 0;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .details {
+            line-height: 1.8;
+            font-size: 1.1em;
+            padding: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .facility-image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            display: block;
+            margin: 40px auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .facility-image:hover {
+            transform: scale(1.02);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.8) 50%,
+                transparent 100%
+            );
+            animation: shine 3s infinite;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        .contribution-form {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+
+        button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--primary-color);
+        }
+
+        .blog-section {
+            margin-top: 60px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .blog-post {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .blog-post h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .blog-post p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .overview {
+                font-size: 1.2em;
+            }
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--secondary-color);
+            width: 0;
+            transition: width 1s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        [data-theme="dark"] {
+            background: linear-gradient(120deg, #20232a 0%, #414345 100%);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .stat-card {
+            background: #2d3436;
+            color: #fff;
+        }
+
+        .main-nav {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .main-nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .main-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    
+    <div class="container">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#process">Our Process</a></li>
+                <li><a href="#impact">Impact</a></li>
+                <li><a href="#contribute">Contribute</a></li>
+                <li><a href="#blog">Blog</a></li>
+            </ul>
+        </nav>
+        <h1 class="fade-in">From Waste to Resource</h1>
+        
+        <p class="overview fade-in">
+            Transforming Inedible Food into Valuable Resources for a Sustainable Future
+        </p>
+        
+        <div class="details slide-in-left">
+            <p>We route inedible waste to composting centers and biogas plants, rewarding contributors. 
+            During emergencies, biogas production is prioritized to meet energy needs in affected areas.</p>
+        </div>
+
+        <img src="image.png" alt="Biogas Plant Facility" class="facility-image fade-in">
+        
+        <div class="stats-container fade-in">
+            <div class="stat-card">
+                <h3>Waste Processed</h3>
+                <div class="stat-value"><span id="wasteCounter">0</span> tons</div>
+                <p>Total waste converted to resources</p>
+                <div class="chart-container">
+                    <canvas id="wasteChart"></canvas>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Energy Generated</h3>
+                <div class="stat-value"><span id="energyCounter">0</span> kWh</div>
+                <p>Clean energy produced</p>
+                <div class="chart-container">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Contributors</h3>
+                <div class="stat-value"><span id="contributorCounter">0</span></div>
+                <p>Active community members</p>
+                <div class="chart-container">
+                    <canvas id="contributorChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="contribution-form slide-in-right">
+            <h2>Contribute to the Cause</h2>
+            <form id="wasteForm">
+                <div class="form-group">
+                    <label for="wasteType">Type of Waste:</label>
+                    <select id="wasteType" required>
+                        <option value="">Select waste type</option>
+                        <option value="food">Food Waste</option>
+                        <option value="organic">Organic Matter</option>
+                        <option value="agricultural">Agricultural Waste</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity (kg):</label>
+                    <input type="number" id="quantity" min="1" required>
+                </div>
+                <button type="submit">Submit Contribution</button>
+            </form>
+        </div>
+
+        <div id="blog" class="blog-section fade-in">
+            <h2>Waste Management Tips</h2>
+            <div class="blog-post">
+                <h3>Composting 101: Getting Started</h3>
+                <p>Learn the basics of home composting, including what materials to use, ideal conditions, and troubleshooting common issues. Start turning your kitchen scraps into valuable garden nutrients today!</p>
+            </div>
+            <div class="blog-post">
+                <h3>Reducing Food Waste in Your Kitchen</h3>
+                <p>Discover practical tips for meal planning, proper food storage, and creative ways to use leftovers. Small changes in your daily routine can make a big difference in reducing food waste.</p>
+            </div>
+            <div class="blog-post">
+                <h3>Understanding Waste Segregation</h3>
+                <p>A comprehensive guide to sorting your waste properly. Learn about different waste categories and how proper segregation can maximize recycling and composting efficiency.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Initialize counters and data arrays for charts
+        let wasteAmount = 0;
+        let energyAmount = 0;
+        let contributors = 0;
+        let wasteData = Array(12).fill(0);
+        let energyData = Array(12).fill(0);
+        let contributorData = Array(12).fill(0);
+
+        // Initialize charts
+        const wasteChart = new Chart(document.getElementById('wasteChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 12}, (_, i) => `${i+1}h`),
+                datasets: [{
+                    label: 'Waste Processed',
+                    data: wasteData,
+                    borderColor: '#4CAF50',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const energyChart = new Chart(document.getElementById('energyChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 12}, (_, i) => `${i+1}h`),
+                datasets: [{
+                    label: 'Energy Generated',
+                    data: energyData,
+                    borderColor: '#2196F3',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const contributorChart = new Chart(document.getElementById('contributorChart'), {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 12}, (_, i) => `${i+1}h`),
+                datasets: [{
+                    label: 'Contributors',
+                    data: contributorData,
+                    backgroundColor: '#FF9800'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Initialize particle background
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                move: { enable: true, speed: 2 }
+            }
+        });
+
+        // Update counters and charts with random increments
+        function updateCounters() {
+            wasteAmount += Math.random() * 2;
+            energyAmount += Math.random() * 5;
+            contributors = Math.floor(contributors + Math.random());
+
+            document.getElementById('wasteCounter').textContent = 
+                Math.round(wasteAmount * 100) / 100;
+            document.getElementById('energyCounter').textContent = 
+                Math.round(energyAmount * 100) / 100;
+            document.getElementById('contributorCounter').textContent = 
+                contributors;
+
+            // Update chart data
+            wasteData.shift();
+            wasteData.push(wasteAmount);
+            energyData.shift();
+            energyData.push(energyAmount);
+            contributorData.shift();
+            contributorData.push(contributors);
+
+            // Update charts
+            wasteChart.update();
+            energyChart.update();
+            contributorChart.update();
+        }
+
+        // Add progress bars to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.innerHTML = '<div class="progress"></div>';
+            card.appendChild(progressBar);
+        });
+
+        // Animate progress bars
+        function updateProgress() {
+            document.querySelectorAll('.progress').forEach(progress => {
+                const randomProgress = Math.random() * 100;
+                progress.style.width = `${randomProgress}%`;
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('wasteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const quantity = parseFloat(document.getElementById('quantity').value);
+            const type = document.getElementById('wasteType').value;
+            
+            wasteAmount += quantity;
+            contributors++;
+            energyAmount += quantity * 2.5; // Simulated energy conversion
+
+            updateCounters();
+            this.reset();
+
+            // Add confetti effect
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 7,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff0000', '#00ff00', '#0000ff']
+                });
+                confetti({
+                    particleCount: 7,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff0000', '#00ff00', '#0000ff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            alert('Thank you for your contribution!');
+        });
+
+        // Dark mode toggle
+        function toggleTheme() {
+            document.body.dataset.theme = 
+                document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        }
+
+        // Add smooth scroll animation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Update counters and progress periodically
+        setInterval(updateCounters, 3000);
+        setInterval(updateProgress, 3000);
+        
+        // Initial updates
+        updateCounters();
+        updateProgress();
+
+        // Scroll animation observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
