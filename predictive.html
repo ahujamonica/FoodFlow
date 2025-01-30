@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Insights for Farmers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+        }
+
+        .insights-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .insight-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .input-section {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .recommendation-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-box:hover {
+            transform: translateX(5px);
+        }
+
+        .recommendation-box h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .recommendation-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .recommendation-box li {
+            margin: 12px 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .alert-box {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .alert-box:hover {
+            transform: scale(1.01);
+        }
+
+        .alert-box h3 {
+            color: #f57c00;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .alert-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .alert-box li {
+            color: #e65100;
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #4CAF50;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .insights-container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        .weather-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .weather-icon {
+            font-size: 2.5rem;
+            margin: 10px 0;
+        }
+
+        .weather-temp {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .weather-desc {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .crop-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .crop-success {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .crop-period {
+            color: #666;
+            font-style: italic;
+        }
+
+        .export-btn {
+            background: #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .export-btn:hover {
+            background: #1976D2;
+        }
+
+        .high-success {
+            border-left: 5px solid #4CAF50;
+        }
+
+        .medium-success {
+            border-left: 5px solid #FFC107;
+        }
+
+        .low-success {
+            border-left: 5px solid #F44336;
+        }
+
+        .crop-details {
+            text-align: left;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .crop-details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="insights-container">
+        <h1>AI-Powered Predictive Farming Insights</h1>
+
+        <div class="insight-card">
+            <h2>🌤️ Weather Forecast</h2>
+            <div class="metrics-grid" id="weatherForecast">
+                <!-- Weather cards will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h2>Crop Recommendations</h2>
+            <button class="export-btn" onclick="exportRecommendations()">Export Recommendations as PDF</button>
+            <div class="input-group">
+                <label for="season">Growing Season</label>
+                <select id="season" class="form-control">
+                    <option value="summer">Summer</option>
+                    <option value="winter">Winter</option>
+                    <option value="monsoon">Monsoon</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="temperature">Average Temperature (°C)</label>
+                <input type="number" id="temperature" value="25" min="-10" max="50" step="0.1">
+            </div>
+            <div class="input-group">
+                <label for="rainfall">Monthly Rainfall (mm)</label>
+                <input type="number" id="rainfall" value="100" min="0" max="500" step="1">
+            </div>
+            <div class="input-group">
+                <label for="soilPh">Soil pH</label>
+                <input type="number" id="soilPh" value="6.5" min="0" max="14" step="0.1">
+            </div>
+            <button onclick="updateCropRecommendations()">Get Crop Recommendations</button>
+            <div id="recommendedCrops" class="metrics-grid">
+                <!-- Crop recommendations will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <script>
+            // Weather data simulation
+            const weatherConditions = [
+                { icon: '☀️', desc: 'Sunny' },
+                { icon: '🌤️', desc: 'Partly Cloudy' },
+                { icon: '☁️', desc: 'Cloudy' },
+                { icon: '🌧️', desc: 'Rainy' },
+                { icon: '⛈️', desc: 'Stormy' }
+            ];
+
+            // Function to fetch weather forecast
+            async function fetchWeatherForecast() {
+                const weatherContainer = document.getElementById('weatherForecast');
+                weatherContainer.innerHTML = '';
+
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Generate 5-day forecast
+                for (let i = 0; i < 5; i++) {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    const condition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+                    const temp = Math.round(15 + Math.random() * 20); // Random temp between 15-35°C
+
+                    const weatherCard = document.createElement('div');
+                    weatherCard.className = 'weather-card';
+                    weatherCard.innerHTML = `
+                        <h3>${date.toLocaleDateString('en-US', { weekday: 'short' })}</h3>
+                        <div class="weather-icon">${condition.icon}</div>
+                        <div class="weather-temp">${temp}°C</div>
+                        <div class="weather-desc">${condition.desc}</div>
+                    `;
+                    weatherContainer.appendChild(weatherCard);
+                }
+            }
+
+            // Crop recommendation system
+            const cropDatabase = {
+                summer: [
+                    { 
+                        name: 'Tomatoes', 
+                        tempRange: [20, 30], 
+                        rainfallRange: [60, 150], 
+                        phRange: [6.0, 7.0],
+                        details: 'Best for fresh market and processing. Requires well-drained soil.'
+                    },
+                    { 
+                        name: 'Corn', 
+                        tempRange: [18, 32], 
+                        rainfallRange: [50, 200], 
+                        phRange: [5.8, 7.0],
+                        details: 'High-yielding crop, needs full sun and regular watering.'
+                    },
+                    { 
+                        name: 'Sunflowers', 
+                        tempRange: [20, 35], 
+                        rainfallRange: [40, 100], 
+                        phRange: [6.0, 7.5],
+                        details: 'Drought-tolerant, excellent for oil production.'
+                    },
+                    { 
+                        name: 'Bell Peppers', 
+                        tempRange: [18, 30], 
+                        rainfallRange: [40, 120], 
+                        phRange: [5.5, 7.0],
+                        details: 'Rich in vitamins, needs well-drained fertile soil.'
+                    },
+                    { 
+                        name: 'Eggplant', 
+                        tempRange: [22, 35], 
+                        rainfallRange: [50, 140], 
+                        phRange: [5.5, 6.8],
+                        details: 'Heat-loving crop, requires consistent moisture.'
+                    }
+                ],
+                winter: [
+                    { 
+                        name: 'Wheat', 
+                        tempRange: [5, 25], 
+                        rainfallRange: [40, 100], 
+                        phRange: [6.0, 7.5],
+                        details: 'Cold-hardy grain, good for rotation farming.'
+                    },
+                    { 
+                        name: 'Peas', 
+                        tempRange: [10, 20], 
+                        rainfallRange: [35, 100], 
+                        phRange: [6.0, 7.0],
+                        details: 'Nitrogen-fixing legume, improves soil health.'
+                    },
+                    { 
+                        name: 'Carrots', 
+                        tempRange: [8, 24], 
+                        rainfallRange: [30, 90], 
+                        phRange: [5.5, 7.0],
+                        details: 'Root vegetable, needs deep, loose soil.'
+                    },
+                    { 
+                        name: 'Spinach', 
+                        tempRange: [5, 20], 
+                        rainfallRange: [30, 80], 
+                        phRange: [6.0, 7.5],
+                        details: 'Fast-growing leafy green, rich in nutrients.'
+                    },
+                    { 
+                        name: 'Broccoli', 
+                        tempRange: [4, 22], 
+                        rainfallRange: [40, 100], 
+                        phRange: [6.0, 7.0],
+                        details: 'Cold-tolerant brassica, needs rich soil.'
+                    }
+                ],
+                monsoon: [
+                    { 
+                        name: 'Rice', 
+                        tempRange: [20, 35], 
+                        rainfallRange: [150, 300], 
+                        phRange: [5.5, 7.0],
+                        details: 'Staple grain crop, requires flooding.'
+                    },
+                    { 
+                        name: 'Soybeans', 
+                        tempRange: [20, 30], 
+                        rainfallRange: [100, 250], 
+                        phRange: [6.0, 7.0],
+                        details: 'Protein-rich legume, good soil improver.'
+                    },
+                    { 
+                        name: 'Green Gram', 
+                        tempRange: [18, 32], 
+                        rainfallRange: [80, 200], 
+                        phRange: [5.5, 7.5],
+                        details: 'Quick-maturing pulse crop.'
+                    },
+                    { 
+                        name: 'Okra', 
+                        tempRange: [22, 35], 
+                        rainfallRange: [80, 200], 
+                        phRange: [6.0, 7.5],
+                        details: 'Heat and humidity tolerant vegetable.'
+                    },
+                    { 
+                        name: 'Sweet Potato', 
+                        tempRange: [20, 32], 
+                        rainfallRange: [100, 200], 
+                        phRange: [5.5, 6.8],
+                        details: 'Drought-tolerant tuber crop.'
+                    }
+                ]
+            };
+
+            function calculateCropSuccess(crop, temp, rainfall, ph) {
+                // Temperature fit calculation
+                const tempOptimal = (temp >= crop.tempRange[0] && temp <= crop.tempRange[1]);
+                const tempClose = (temp >= crop.tempRange[0] - 5 && temp <= crop.tempRange[1] + 5);
+                let tempScore = tempOptimal ? 100 : (tempClose ? 60 : 20);
+
+                // Rainfall fit calculation
+                const rainfallOptimal = (rainfall >= crop.rainfallRange[0] && rainfall <= crop.rainfallRange[1]);
+                const rainfallClose = (rainfall >= crop.rainfallRange[0] - 20 && rainfall <= crop.rainfallRange[1] + 20);
+                let rainfallScore = rainfallOptimal ? 100 : (rainfallClose ? 60 : 20);
+
+                // pH fit calculation
+                const phOptimal = (ph >= crop.phRange[0] && ph <= crop.phRange[1]);
+                const phClose = (ph >= crop.phRange[0] - 0.5 && ph <= crop.phRange[1] + 0.5);
+                let phScore = phOptimal ? 100 : (phClose ? 60 : 20);
+
+                // Calculate weighted average (temperature: 40%, rainfall: 40%, pH: 20%)
+                return Math.round((tempScore * 0.4) + (rainfallScore * 0.4) + (phScore * 0.2));
+            }
+
+            function updateCropRecommendations() {
+                const season = document.getElementById('season').value;
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                const rainfall = parseFloat(document.getElementById('rainfall').value);
+                const soilPh = parseFloat(document.getElementById('soilPh').value);
+
+                const container = document.getElementById('recommendedCrops');
+                container.innerHTML = '';
+
+                const crops = cropDatabase[season];
+                
+                // Calculate success rates for all crops
+                const rankedCrops = crops.map(crop => ({
+                    ...crop,
+                    successRate: calculateCropSuccess(crop, temperature, rainfall, soilPh)
+                })).sort((a, b) => b.successRate - a.successRate);
+
+                // Display only the top performing crops
+                rankedCrops.forEach(crop => {
+                    const successClass = crop.successRate >= 80 ? 'high-success' : 
+                                       crop.successRate >= 60 ? 'medium-success' : 'low-success';
+
+                    const cropCard = document.createElement('div');
+                    cropCard.className = `crop-card ${successClass}`;
+                    cropCard.innerHTML = `
+                        <h3>${crop.name}</h3>
+                        <div class="crop-success">Success Rate: ${crop.successRate}%</div>
+                        <div class="crop-details">
+                            <p><strong>Optimal Temperature:</strong> ${crop.tempRange[0]}°C - ${crop.tempRange[1]}°C</p>
+                            <p><strong>Ideal Rainfall:</strong> ${crop.rainfallRange[0]}mm - ${crop.rainfallRange[1]}mm</p>
+                            <p><strong>Best pH Range:</strong> ${crop.phRange[0]} - ${crop.phRange[1]}</p>
+                            <p><strong>Details:</strong> ${crop.details}</p>
+                        </div>
+                        <div class="crop-period">Growing Period: ${Math.floor(60 + Math.random() * 60)} days</div>
+                    `;
+                    container.appendChild(cropCard);
+                });
+            }
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchWeatherForecast();
+                updateCropRecommendations();
+            });
+
+            async function exportRecommendations() {
+                const loading = document.querySelector('.loading');
+                loading.style.display = 'flex';
+                
+                try {
+                    // Create content for PDF
+                    const season = document.getElementById('season').value;
+                    const temperature = document.getElementById('temperature').value;
+                    const rainfall = document.getElementById('rainfall').value;
+                    const soilPh = document.getElementById('soilPh').value;
+                    
+                    let content = `
+                        Crop Recommendations Report
+                        -------------------------
+                        Date: ${new Date().toLocaleDateString()}
+                        Season: ${season.charAt(0).toUpperCase() + season.slice(1)}
+                        Temperature: ${temperature}°C
+                        Rainfall: ${rainfall}mm
+                        Soil pH: ${soilPh}
+                        
+                        Recommended Crops:
+                        `;
+                        
+                    const crops = cropDatabase[season];
+                    crops.forEach(crop => {
+                        const successRate = calculateCropSuccess(crop, parseFloat(temperature), 
+                            parseFloat(rainfall), parseFloat(soilPh));
+                        content += `\n${crop.name} - Success Rate: ${successRate}%`;
+                    });
+                    
+                    // Create Blob and download
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `crop-recommendations-${new Date().toLocaleDateString()}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Failed to export recommendations. Please try again.');
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
