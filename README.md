@@ -14,4 +14,4 @@ Features:
 **Analytics**: Dashboards for tracking trends and transactions.  
 **Recipe Suggestion**: Tailored recipes based on given leftover food items either by typing or using AI speech-to-text.  
   
-**Explanation of the solution**:  https://drive.google.com/file/d/1tsEoVCeZIo4uta6OCkT396Lj3CaCy-5H/view?usp=sharing
+**Explanation of the solution**: https://drive.google.com/file/d/19Nn5XTjXKte2mw_EernNO_YfrW6HuoX6/view?usp=sharing  (final rec)
